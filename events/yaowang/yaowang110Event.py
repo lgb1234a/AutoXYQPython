@@ -1,8 +1,9 @@
 from abstractEvent import AbstractEvent
 
 class Yaowang110Event(AbstractEvent):
-    def __init__(self):
+    def __init__(self, observer):
         super().__init__(self, '<妖王110>')
+        self.observer = observer
 
     def preCondition(self):
 		# print('当前不在登录页')

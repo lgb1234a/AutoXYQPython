@@ -15,6 +15,9 @@ class AbstractLogic():
     def valid(self):
         return True
 
+    def reset(self):
+        pass
+
     def start(self):
         for event in self.events:
             self.queue.put(event)

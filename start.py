@@ -20,7 +20,9 @@ logics = [YaowangLogic(eventQueue)]
 day = time.localtime().tm_mday
 
 def refreshLogics():
-    pass
+    for logic in logics:
+        logic.reset()
+
 
 def restartApp():
     utils.kill_app()
@@ -46,8 +48,7 @@ def start():
             restartApp()
 
     if day != time.localtime().tm_mday:
-        #刷新任务
-        pass
+        refreshLogics()
     day = time.localtime().tm_mday
 
 

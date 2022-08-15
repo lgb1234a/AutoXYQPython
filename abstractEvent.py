@@ -1,32 +1,23 @@
-import time
-import threading
+import datetime
 class AbstractEvent():
-	def __init__(self, name):
-		self.name = name
+    def __init__(self, name) -> None:
+        self.name = name
+    
+    def preCondition(self):
+       return False
 	
-	def logger(self):
-		print(time.localtime()+':'+self.name)
+    def do(self):
+       return False
+	
+    def completionCondition(self):
+       return False
+
+    
+    def logger(self, msg):
+        d = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log = f'{d}:{self.name} {msg}'
+        with open('log.txt', 'a') as f:
+            f.write(log)
+
 		
-	def preCondition(self):
-		return False
 	
-	def do(self):
-		return False
-	
-	def completionCondition(self):
-		return False
-	
-	def preConditionFailed(self):
-		#前置条件不满足
-		#大退重进
-		print('大退重进')
-		
-	def doFailed(self):
-		#执行出错
-		#将事件重新入栈
-		print('将事件重新入栈')
-		
-	def completionConditionFailed(self):
-		#前置条件不满足
-		#大退重进
-		print('大退重进')
