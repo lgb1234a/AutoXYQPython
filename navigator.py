@@ -18,6 +18,7 @@ def navigate_to(destPageType):
 
             elif crtPageType == pageType.denglu:
                 tap(268,610)
+                sleep(5)
                 break
 
             elif crtPageType == pageType.zhucheng:
@@ -35,7 +36,6 @@ def navigate_to(destPageType):
                 break
 
             elif crtPageType == pageType.fengyao:
-                print('-------- fengyao')
                 if destPageType == pageType.chenxing:
                     find_and_click_text("天降辰星")
                 if destPageType == pageType.yaowang:

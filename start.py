@@ -5,61 +5,63 @@ from multiprocessing import Process
 import random
 import time
 import cv2
+from pytz import HOUR
 from pages import pageType
 import utils
-import navigator
+from level import LevelModel
+from apscheduler.schedulers.blocking import BlockingScheduler
+from triggerManager import TriggerManager
+from queue import Queue
+import loginEvent
+from yaowangLogic import YaowangLogic
 
-def click_zhucheng():
-    utils.tap(130, 900)
-    if time.localtime().tm_hour == 0:
-        p = utils.recg_img_and_tap("TargetPic/new_day_next.png")
-        if bool(p):
-            for i in range(1,10):
-                utils.tap(p[0],p[1])
-        utils.recg_img_and_tap("TargetPic/new_day_close.png")
-    
+eventQueue = Queue()
+logics = [YaowangLogic(eventQueue)]
+day = time.localtime().tm_mday
 
-def skip_others():
-    utils.recg_img_and_tap("TargetPic/login_btn.png")
-    utils.recg_img_and_tap("TargetPic/guaji_btn.png")
-    
+def refreshLogics():
+    pass
 
-def c_yaowang(level):
-    t = time.localtime()
-    if t.tm_min >= 20 and t.tm_min < 30:
-        return
-    if t.tm_min >= 50:
-        return
-    
-    while(1):
-        p = utils.recg_img_and_tap(f"TargetPic/yaowang_{level}.png")
-        if bool(p):
-            utils.recg_img_and_tap(f"TargetPic/yaowang_click.png")
-            return True
-        
-        utils.swip(120, 177, 170, 177)
-        p = utils.recg_img_and_tap("TargetPic/yaowang_130_border.png")
-        if bool(p):
-            if level <= 130 and level >= 90:
-                utils.swip(120, 177, 170, 177)
-        p = utils.recg_img_and_tap("TargetPic/yaowang_50_border.png")
-        if bool(p):
-            if level > 90:
-                utils.swip(170, 177, 120, 177)
+def restartApp():
+    utils.kill_app()
+    time.sleep(5)
+    if not utils.is_app_running():
+        utils.launch_app()
+        time.sleep(10)
+    eventQueue.put(loginEvent())
 
-def yao_wang():
-    navigator.navigate_to(pageType.yaowang)
-    time.sleep(2)
-    for i in range(50, 140, 10):
-        c_yaowang(i)
+
+def start():
+    if eventQueue.empty:
+        for logic in logics:
+            if logic.valid():
+                logic.start()
+    else:
+        event = eventQueue.get(False)
+        if not event.preCondition():
+            restartApp()
+        if not event.do():
+            eventQueue.put(event)
+        if not event.completionCondition():
+            restartApp()
+
+    if day != time.localtime().tm_mday:
+        #刷新任务
+        pass
+    day = time.localtime().tm_mday
+
 
 
 if __name__ == "__main__":
     #连接adb
-    # os.system("adb connect 127.0.0.1:62001")
+    os.system("adb connect 127.0.0.1:62001")
     #启动游戏
-    # utils.launch_app()
-    # time.sleep(10)
-    # yao_wang()
-    utils.kill_app()
+    if not utils.is_app_running():
+        utils.launch_app()
+        time.sleep(10)
 
+    eventQueue.put(loginEvent.LoginEvent())
+    scheduler = BlockingScheduler()
+    trigger = TriggerManager.interval_trigger(conf={"timeInterval": 1, "timeUnit": 's'})
+    scheduler.add_job(start, trigger)
+    scheduler.start()
