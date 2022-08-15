@@ -12,8 +12,10 @@ from level import LevelModel
 from apscheduler.schedulers.blocking import BlockingScheduler
 from triggerManager import TriggerManager
 from queue import Queue
-import loginEvent
-from yaowangLogic import YaowangLogic
+from events.loginEvent import LoginEvent
+from events.pendingEvent import PendingEvent
+from events.lixianshouyiEvent import LixianshouyiEvent
+from logic.yaowangLogic import YaowangLogic
 
 eventQueue = Queue()
 logics = [YaowangLogic(eventQueue)]
@@ -30,16 +32,19 @@ def restartApp():
     if not utils.is_app_running():
         utils.launch_app()
         time.sleep(10)
-    eventQueue.put(loginEvent())
+    eventQueue = Queue()
+    eventQueue.put(LoginEvent())
+    eventQueue.put(PendingEvent(5))
+    eventQueue.put(LixianshouyiEvent())
 
 
 def start():
-    if eventQueue.empty:
+    if eventQueue.qsize() == 0:
         for logic in logics:
             if logic.valid():
                 logic.start()
     else:
-        event = eventQueue.get(False)
+        event = eventQueue.get(True)
         if not event.preCondition():
             restartApp()
         if not event.do():
@@ -61,7 +66,10 @@ if __name__ == "__main__":
         utils.launch_app()
         time.sleep(10)
 
-    eventQueue.put(loginEvent.LoginEvent())
+    eventQueue.put(LoginEvent())
+    eventQueue.put(PendingEvent(5))
+    eventQueue.put(LixianshouyiEvent())
+
     scheduler = BlockingScheduler()
     trigger = TriggerManager.interval_trigger(conf={"timeInterval": 1, "timeUnit": 's'})
     scheduler.add_job(start, trigger)

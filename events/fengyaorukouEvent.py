@@ -2,7 +2,7 @@ from abstractEvent import AbstractEvent
 
 class FengyaoRukouEvent(AbstractEvent):
     def __init__(self):
-        super().__init__(self, '<封妖入口>')
+        super().__init__('<封妖入口>')
 
     def preCondition(self):
 		# print('当前不在登录页')

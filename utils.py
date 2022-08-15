@@ -26,6 +26,11 @@ def screen_shot():
     s = f"adb -s {emulator_ip} shell screencap -p {android_path}/1.png"
     os.system(s)
 
+def is_app_running():
+    s = f"adb -s {emulator_ip} shell dumpsys window | findstr mCurrentFocus | findstr com.netease.xyh5"
+    r = os.system(s)
+    return r == 0
+
 def tap(x,y):
     s = f"adb -s {emulator_ip} shell input tap {x} {y}"
     os.system(s)
@@ -96,4 +101,5 @@ if __name__ == "__main__":
     #连接adb
     # os.system("adb connect 127.0.0.1:62001")
     # screen_shot()
-    print(get_page().pageType)
+    os.system("adb connect 127.0.0.1:62001")
+    print(is_app_running())

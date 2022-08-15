@@ -2,7 +2,7 @@ from abstractEvent import AbstractEvent
 
 class Yaowang130Event(AbstractEvent):
     def __init__(self, observer):
-        super().__init__(self, '<妖王130>')
+        super().__init__('<妖王130>')
         self.observer = observer
 
     def preCondition(self):

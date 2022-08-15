@@ -1,10 +1,11 @@
 from abstractLogic import AbstractLogic
 import time
-import zhuchengEvent, fengyaorukouEvent, fengyaoEvent, yaowangEvent, yaowang50Event, yaowang60Event, yaowang70Event, yaowang80Event, yaowang90Event, yaowang100Event, yaowang110Event, yaowang120Event, yaowang130Event
+from events import yaowangEvent, zhuchengEvent, fengyaorukouEvent, fengyaoEvent
+from events.yaowang import yaowang50Event, yaowang60Event, yaowang70Event, yaowang80Event, yaowang90Event, yaowang100Event, yaowang110Event, yaowang120Event, yaowang130Event
 
 class YaowangLogic(AbstractLogic):
     def __init__(self, queue) -> None:
-        super().__init__(self, queue)
+        super().__init__(queue)
         self.restCount = 100
         self.restTicket = 0
     
@@ -21,6 +22,7 @@ class YaowangLogic(AbstractLogic):
             return False
         if self.restCount == 0:
             return False
+        return True
 
     def updateRestCount(self, count, tickets):
         self.restCount = count

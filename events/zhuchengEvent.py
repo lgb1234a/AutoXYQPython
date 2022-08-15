@@ -2,7 +2,7 @@ from abstractEvent import AbstractEvent
 
 class ZhuchengEvent(AbstractEvent):
     def __init__(self):
-        super().__init__(self, '<主城>')
+        super().__init__('<主城>')
 
     def preCondition(self):
 		# print('当前不在登录页')

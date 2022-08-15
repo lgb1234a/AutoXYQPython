@@ -1,12 +1,12 @@
 from abstractEvent import AbstractEvent
 import utils
 
-class LoginEvent(AbstractEvent):
+class LixianshouyiEvent(AbstractEvent):
     def __init__(self):
-        super().__init__('<登录>')
+        super().__init__('<离线收益弹窗>')
 
     def preCondition(self):
-        p = utils.recg_img_and_tap("TargetPic/login_btn.png")
+        p = utils.recg_img_and_tap("TargetPic/lixianshouyi_btn.png")
         return bool(p)
 	
     def do(self):
