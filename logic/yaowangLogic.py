@@ -1,37 +1,27 @@
+from . import YaowangChallengeEvent
 from abstractLogic import AbstractLogic
 import time
-from events import yaowangEvent, zhuchengEvent, fengyaorukouEvent, fengyaoEvent
-from events.yaowang import yaowang50Event, yaowang60Event, yaowang70Event, yaowang80Event, yaowang90Event, yaowang100Event, yaowang110Event, yaowang120Event, yaowang130Event
+from ocrModel import OcrModel
+import utils
+from events import yaowangEvent, zhuchengEvent, fengyaorukouEvent
+from events.yaowangChallengeEvent import YaowangChallengeEvent
 
 class YaowangLogic(AbstractLogic):
     def __init__(self, queue) -> None:
         super().__init__(queue)
         self.restCount = 100
         self.restTicket = 0
-        self.undoLevels = []
-        self.levelMapEvent = {
-            130:yaowang130Event.Yaowang130Event(self),
-            120:yaowang120Event.Yaowang120Event(self),
-            110:yaowang110Event.Yaowang110Event(self),
-            100:yaowang100Event.Yaowang100Event(self),
-            90:yaowang90Event.Yaowang90Event(self),
-            80:yaowang80Event.Yaowang80Event(self),
-            70:yaowang70Event.Yaowang70Event(self),
-            60:yaowang60Event.Yaowang60Event(self),
-            50:yaowang50Event.Yaowang50Event(self)
-        }
     
     def initEvents(self):
         self.events = [zhuchengEvent.ZhuchengEvent(), fengyaorukouEvent.FengyaoRukouEvent(), yaowangEvent.YaowangEvent()]
 
-        self.undoLevels = []
         if self.restCount < 9:
             for i in range(0, self.restCount):
-                self.undoLevels.append(130 - i*10)
+                self.events.append(YaowangChallengeEvent(self, 130 - i*10))
         else:
-            self.undoLevels = [130, 120, 110, 100, 90, 80, 70, 60, 50]
-        for level in self.undoLevels:
-            self.events.append(self.levelMapEvent[level])
+            # 50~130
+            for i in range(130, 40, -10):
+                self.events.append(YaowangChallengeEvent(self, i))
             
 
     # 时间区间&&剩余次数>0
@@ -45,19 +35,73 @@ class YaowangLogic(AbstractLogic):
             return False
         return True
 
-    def updateRestCount(self, count, tickets):
-        self.restCount = count
-        self.restTicket = tickets
+    def updateRestCount(self):
+        r = utils.ocr()
+        for lineInfo in r:
+            m = OcrModel(lineInfo)
+            idx = m.text.find("/9")
+            if idx != -1:
+                self.restTicket = int(m.text[0:idx])
+            idx = m.text.find("/100")
+            if idx != -1:
+                self.restCount = int(m.text[m.text.find("归属奖励次数：") : idx])
     
     def reset(self):
         self.restCount = 100
 
-    def findYaowang(self, level):
-        pass
+    def locateLevelAndChallenge(self, destLevel):
+        result = utils.ocr()
+        maxLevel = 0
+        minLevel = 500
+        gs = []
+        for i in result:
+            m = OcrModel(i)
+            if m.text.find(f'{destLevel}级') != -1:
+                utils.tap(m.center[0], m.center[1] - 30)
+                utils.recg_img_and_click("TargetPic/yaowang_click.png")
+                return True
+            if len(m.text) < 5 and m.text.find('0级') != -1:
+                level = int(m.text[0, m.text.find('0级') + 1])
+                if level >= maxLevel:
+                    maxLevel = level
+                gs.append(level)
+
+        for l in gs:
+            if l < min and max - l < 100:
+                min = l
+
+        if destLevel < minLevel:
+            #左滑
+            utils.swip()
+        if destLevel > maxLevel:
+            utils.swip()
+        return False
+
+    def challengeFinished(self):
+        r = utils.find_and_click_text("驻守者", False)
+        return r
+
+    def startYaowang(self, level):
+        loops = 0
+        while(not self.locateLevelAndChallenge(level)):
+            loops = loops + 1
+            if loops > 20:
+                self.yaowangFailed(level)
+                return False
+        
+        loops = 0
+        while(not self.challengeFinished()):
+            loops = loops + 1
+            if loops > 20:
+                self.yaowangFailed(level)
+                return False
+
+        self.yaowangDone(level)
+        return True
 
     def yaowangDone(self, level):
-        self.undoLevels.remove(level)
+        pass
 
     #未找到，重新加入事件队列
     def yaowangFailed(self, level):
-        super().appendEvent(self.levelMapEvent[level])
+        super().appendEvent(YaowangChallengeEvent(self, level))

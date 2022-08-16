@@ -90,7 +90,7 @@ def find_and_click_text(text, need_tap = True):
     return False
 
 def get_page():
-    result = ocrInstance()
+    result = ocr()
     for i in result:
         m = OcrModel(i)
         print(m.text)
@@ -104,4 +104,4 @@ if __name__ == "__main__":
     # os.system("adb connect 127.0.0.1:62001")
     # screen_shot()
     os.system("adb connect 127.0.0.1:62001")
-    print(ocr())
+    get_page()
