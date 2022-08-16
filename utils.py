@@ -60,14 +60,14 @@ def image_to_position(screen, template):
         return False
 
 
-def recg_img_and_click(path, tap = True):
+def recg_img_and_click(path, need_tap = True):
     screen_shot()
     time.sleep(2)
     screen = cv2.imread(screen_shot_path)
     template =  cv2.imread(path)
     print(path)
     p = image_to_position(screen, template)
-    if bool(p) and tap:
+    if bool(p) and need_tap:
         tap(p[0], p[1])
     return p
 
@@ -79,12 +79,12 @@ def ocr():
     result = ocrInstance.ocr(screen_shot_path, cls=False)
     return result
 
-def find_and_click_text(text, tap = True):
+def find_and_click_text(text, need_tap = True):
     result = ocr()
     for i in result:
         m = OcrModel(i)
         if m.text.find(text) != -1:
-            if tap:
+            if need_tap:
                 tap(m.center[0], m.center[1])
             return True
     return False
@@ -103,5 +103,5 @@ if __name__ == "__main__":
     #连接adb
     # os.system("adb connect 127.0.0.1:62001")
     # screen_shot()
-    # os.system("adb connect 127.0.0.1:62001")
+    os.system("adb connect 127.0.0.1:62001")
     print(ocr())

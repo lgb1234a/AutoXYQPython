@@ -32,7 +32,8 @@ def restartApp():
     if not utils.is_app_running():
         utils.launch_app()
         time.sleep(10)
-    eventQueue = Queue()
+        
+    eventQueue.queue.clear()
     eventQueue.put(LoginEvent())
     eventQueue.put(PendingEvent(5))
     eventQueue.put(LixianshouyiEvent())

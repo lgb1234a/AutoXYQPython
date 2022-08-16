@@ -4,7 +4,6 @@ class AbstractLogic():
         self.events = []
         self.done = False
         self.queue = queue
-        self.initEvents()
 
     def initEvents(self):
         pass
@@ -19,5 +18,9 @@ class AbstractLogic():
         pass
 
     def start(self):
+        self.initEvents()
         for event in self.events:
             self.queue.put(event)
+
+    def appendEvent(self, event):
+        self.queue.put(event)

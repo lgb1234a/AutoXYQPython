@@ -6,11 +6,11 @@ class ZhuchengEvent(AbstractEvent):
         super().__init__('<主城>')
 
     def _preCondition(self):
-        utils.tap()
+        utils.tap(130, 900)
         return True
 	
     def _do(self):
-        utils.tap()
+        utils.tap(130, 900)
         return True
 		
     def _completionCondition(self):
