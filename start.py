@@ -32,7 +32,7 @@ def restartApp():
     if not utils.is_app_running():
         utils.launch_app()
         time.sleep(10)
-        
+
     eventQueue.queue.clear()
     eventQueue.put(LoginEvent())
     eventQueue.put(PendingEvent(5))
@@ -49,6 +49,7 @@ def start():
         if not event.preCondition():
             restartApp()
         if not event.do():
+            #Todo:
             eventQueue.put(event)
         if not event.completionCondition():
             restartApp()

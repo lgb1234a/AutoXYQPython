@@ -1,4 +1,3 @@
-from . import YaowangChallengeEvent
 from abstractLogic import AbstractLogic
 import time
 from ocrModel import OcrModel
@@ -48,56 +47,6 @@ class YaowangLogic(AbstractLogic):
     
     def reset(self):
         self.restCount = 100
-
-    def locateLevelAndChallenge(self, destLevel):
-        result = utils.ocr()
-        maxLevel = 0
-        minLevel = 500
-        gs = []
-        for i in result:
-            m = OcrModel(i)
-            if m.text.find(f'{destLevel}级') != -1:
-                utils.tap(m.center[0], m.center[1] - 30)
-                utils.recg_img_and_click("TargetPic/yaowang_click.png")
-                return True
-            if len(m.text) < 5 and m.text.find('0级') != -1:
-                level = int(m.text[0, m.text.find('0级') + 1])
-                if level >= maxLevel:
-                    maxLevel = level
-                gs.append(level)
-
-        for l in gs:
-            if l < min and max - l < 100:
-                min = l
-
-        if destLevel < minLevel:
-            #左滑
-            utils.swip()
-        if destLevel > maxLevel:
-            utils.swip()
-        return False
-
-    def challengeFinished(self):
-        r = utils.find_and_click_text("驻守者", False)
-        return r
-
-    def startYaowang(self, level):
-        loops = 0
-        while(not self.locateLevelAndChallenge(level)):
-            loops = loops + 1
-            if loops > 20:
-                self.yaowangFailed(level)
-                return False
-        
-        loops = 0
-        while(not self.challengeFinished()):
-            loops = loops + 1
-            if loops > 20:
-                self.yaowangFailed(level)
-                return False
-
-        self.yaowangDone(level)
-        return True
 
     def yaowangDone(self, level):
         pass

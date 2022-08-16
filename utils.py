@@ -104,4 +104,4 @@ if __name__ == "__main__":
     # os.system("adb connect 127.0.0.1:62001")
     # screen_shot()
     os.system("adb connect 127.0.0.1:62001")
-    get_page()
+    swip(100, 180, 200, 180)
