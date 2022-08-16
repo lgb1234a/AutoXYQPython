@@ -68,10 +68,10 @@ if __name__ == "__main__":
     if not utils.is_app_running():
         utils.launch_app()
         time.sleep(10)
+        eventQueue.put(LoginEvent())
+        eventQueue.put(PendingEvent(5))
+        eventQueue.put(LixianshouyiEvent())
 
-    eventQueue.put(LoginEvent())
-    eventQueue.put(PendingEvent(5))
-    eventQueue.put(LixianshouyiEvent())
 
     scheduler = BlockingScheduler()
     trigger = TriggerManager.interval_trigger(conf={"timeInterval": 1, "timeUnit": 's'})
