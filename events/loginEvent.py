@@ -5,12 +5,12 @@ class LoginEvent(AbstractEvent):
     def __init__(self):
         super().__init__('<登录>')
 
-    def preCondition(self):
-        p = utils.recg_img_and_tap("TargetPic/login_btn.png")
+    def _preCondition(self):
+        p = utils.recg_img_and_click("TargetPic/login_btn.png")
         return bool(p)
 	
-    def do(self):
+    def _do(self):
         return True
 		
-    def completionCondition(self):
+    def _completionCondition(self):
         return True

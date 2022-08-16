@@ -3,7 +3,7 @@ from asyncore import loop
 from os import kill
 from time import sleep
 from pages import pages, pageType
-from utils import get_page,tap,find_and_click_text,kill_app,launch_app,recg_img_and_tap
+from utils import get_page,tap,find_and_click_text,kill_app,launch_app,recg_img
 
 def navigate_to(destPageType):
     loopCount = 0
@@ -25,7 +25,7 @@ def navigate_to(destPageType):
                 if destPageType == pageType.wanfa or destPageType == pageType.guaji:
                     tap(38, 900)
                 elif destPageType == pageType.yaowang or destPageType == pageType.chenxing:
-                    recg_img_and_tap('TargetPic/fengyao_rukou.png')
+                    recg_img_and_click('TargetPic/fengyao_rukou.png')
                 break
 
             elif crtPageType == pageType.guaji:

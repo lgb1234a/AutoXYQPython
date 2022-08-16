@@ -4,19 +4,19 @@ class YaowangEvent(AbstractEvent):
     def __init__(self):
         super().__init__('<封印妖王>')
 
-    def preCondition(self):
+    def _preCondition(self):
 		# print('当前不在登录页')
-		# super().preConditionFailed()
+		# super()._preConditionFailed()
         print('当前在登录页')
         return True
 	
-    def do(self):
+    def _do(self):
 		# print('找不到登录按钮')
 		# super().doFailed()
         print('点击了登录按钮')
         return True
 		
-    def completionCondition(self):
+    def _completionCondition(self):
 		# print('当前不在离线收益页')
 		# super().completionConditionFailed()
         print('当前在离线收益页')

@@ -5,7 +5,7 @@ from multiprocessing import Process
 import random
 import time
 import cv2
-import easyocr
+from paddleocr import PaddleOCR
 from ocrModel import OcrModel
 from pages import pages,pageType
 
@@ -37,7 +37,7 @@ def tap(x,y):
     time.sleep(1)
 
 def swip(startX, startY, toX, toY):
-    s = f"adb -s {emulator_ip} shell input swipe {startX} {startY} {toX} {toY} 50"
+    s = f"adb -s {emulator_ip} shell input swipe {startX} {startY} {toX} {toY}"
     os.system(s)
     time.sleep(2)
 
@@ -60,35 +60,37 @@ def image_to_position(screen, template):
         return False
 
 
-def recg_img_and_tap(path):
+def recg_img_and_click(path, tap = True):
     screen_shot()
     time.sleep(2)
     screen = cv2.imread(screen_shot_path)
     template =  cv2.imread(path)
     print(path)
     p = image_to_position(screen, template)
-    print(p)
-    if bool(p):
+    if bool(p) and tap:
         tap(p[0], p[1])
     return p
 
+
+
+ocrInstance = PaddleOCR(enable_mkldnn=True, use_tensorrt=True, use_angle_cls = False, use_gpu= False) #使用CPU预加载，不用GPU
 def ocr():
     screen_shot()
-    reader = easyocr.Reader(['ch_sim'], download_enabled=False) # ch_sim是Chinese simplified简写
-    result = reader.readtext(screen_shot_path)
+    result = ocrInstance.ocr(screen_shot_path, cls=False)
     return result
 
-def find_and_click_text(text):
+def find_and_click_text(text, tap = True):
     result = ocr()
     for i in result:
         m = OcrModel(i)
         if m.text.find(text) != -1:
-            tap(m.center[0], m.center[1])
+            if tap:
+                tap(m.center[0], m.center[1])
             return True
     return False
 
 def get_page():
-    result = ocr()
+    result = ocrInstance()
     for i in result:
         m = OcrModel(i)
         print(m.text)
@@ -101,5 +103,5 @@ if __name__ == "__main__":
     #连接adb
     # os.system("adb connect 127.0.0.1:62001")
     # screen_shot()
-    os.system("adb connect 127.0.0.1:62001")
-    print(is_app_running())
+    # os.system("adb connect 127.0.0.1:62001")
+    print(ocr())

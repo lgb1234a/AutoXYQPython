@@ -7,12 +7,12 @@ class PendingEvent(AbstractEvent):
         super().__init__(f'<暂停{interval}s>')
         self.interval = interval
 
-    def preCondition(self):
+    def _preCondition(self):
         return True
 	
-    def do(self):
+    def _do(self):
         sleep(self.interval)
         return True
 		
-    def completionCondition(self):
+    def _completionCondition(self):
         return True

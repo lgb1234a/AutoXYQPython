@@ -1,23 +1,18 @@
 from abstractEvent import AbstractEvent
+import utils
 
 class FengyaoRukouEvent(AbstractEvent):
     def __init__(self):
         super().__init__('<封妖入口>')
 
-    def preCondition(self):
-		# print('当前不在登录页')
-		# super().preConditionFailed()
-        print('当前在登录页')
+    def _preCondition(self):
         return True
 	
-    def do(self):
-		# print('找不到登录按钮')
-		# super().doFailed()
-        print('点击了登录按钮')
-        return True
+    def _do(self):
+        p = utils.recg_img_and_click('TargetPic/fengyao_rukou.png')
+        return bool(p)
 		
-    def completionCondition(self):
-		# print('当前不在离线收益页')
-		# super().completionConditionFailed()
-        print('当前在离线收益页')
-        return True
+    def _completionCondition(self):
+        #展示封妖页
+        r = utils.find_and_click_text('天降辰星', False)
+        return r

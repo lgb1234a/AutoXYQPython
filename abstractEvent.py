@@ -4,13 +4,18 @@ class AbstractEvent():
         self.name = name
     
     def preCondition(self):
-       return False
+        r = self._preCondition()
+        return r
 	
     def do(self):
-       return False
+        r = self._do()
+        return r
 	
     def completionCondition(self):
-       return False
+        r = self._completionCondition()
+        if not r:
+            self.logger("执行结果不匹配")
+        return r
 
     
     def logger(self, msg):

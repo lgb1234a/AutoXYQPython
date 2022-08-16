@@ -21,7 +21,7 @@ eventQueue = Queue()
 logics = [YaowangLogic(eventQueue)]
 day = time.localtime().tm_mday
 
-def refreshLogics():
+def resetLogics():
     for logic in logics:
         logic.reset()
 
@@ -53,11 +53,11 @@ def start():
             restartApp()
 
     if day != time.localtime().tm_mday:
-        refreshLogics()
+        resetLogics()
     day = time.localtime().tm_mday
 
 
-
+#540x960分辨率
 if __name__ == "__main__":
     #连接adb
     os.system("adb connect 127.0.0.1:62001")
