@@ -10,6 +10,8 @@ class YaowangLogic(AbstractLogic):
         super().__init__(queue)
         self.restCount = 100
         self.restTicket = 0
+        self.restLevels = []
+        self.lastDoneMin = 0
     
     def initEvents(self):
         self.events = [zhuchengEvent.ZhuchengEvent(), fengyaorukouEvent.FengyaoRukouEvent(), yaowangEvent.YaowangEvent()]
@@ -17,10 +19,12 @@ class YaowangLogic(AbstractLogic):
         if self.restCount < 9:
             for i in range(0, self.restCount):
                 self.events.append(YaowangChallengeEvent(self, 130 - i*10))
+                self.restLevels.append(130 - i*10)
         else:
             # 50~130
             for i in range(130, 40, -10):
                 self.events.append(YaowangChallengeEvent(self, i))
+                self.restLevels.append(i)
             
 
     # 时间区间&&剩余次数>0
@@ -32,7 +36,7 @@ class YaowangLogic(AbstractLogic):
             return False
         if self.restCount == 0:
             return False
-        return True
+        return self.lastDoneMin != time.localtime().tm_min
 
     def updateRestCount(self):
         r = utils.ocr()
@@ -43,13 +47,16 @@ class YaowangLogic(AbstractLogic):
                 self.restTicket = int(m.text[0:idx])
             idx = m.text.find("/100")
             if idx != -1:
-                self.restCount = int(m.text[m.text.find("归属奖励次数：") : idx])
+                self.restCount = int(m.text[m.text.find("：")+1 : idx])
     
     def reset(self):
         self.restCount = 100
 
     def yaowangDone(self, level):
-        pass
+        self.restLevels.remove(level)
+        l = len(self.restLevels)
+        if l == 0:
+            self.lastDoneMin = time.localtime().tm_min
 
     #未找到，重新加入事件队列
     def yaowangFailed(self, level):

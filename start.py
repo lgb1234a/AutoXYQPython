@@ -18,7 +18,8 @@ from events.lixianshouyiEvent import LixianshouyiEvent
 from logic.yaowangLogic import YaowangLogic
 
 eventQueue = Queue()
-logics = [YaowangLogic(eventQueue)]
+yl = YaowangLogic(eventQueue)
+logics = [yl]
 day = time.localtime().tm_mday
 
 def resetLogics():
@@ -53,10 +54,10 @@ def start():
             eventQueue.put(event)
         if not event.completionCondition():
             restartApp()
-
-    if day != time.localtime().tm_mday:
+    d = time.localtime().tm_mday
+    if day != d:
         resetLogics()
-    day = time.localtime().tm_mday
+    day = d
 
 
 #540x960分辨率

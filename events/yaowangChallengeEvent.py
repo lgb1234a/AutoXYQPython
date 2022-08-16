@@ -10,7 +10,7 @@ class YaowangChallengeEvent(AbstractEvent):
         self.level = level
 
     def _preCondition(self):
-        # self.observer.updateRestCount()
+        self.observer.updateRestCount()
         return True
 
     def locateLevelAndChallenge(self, destLevel):
