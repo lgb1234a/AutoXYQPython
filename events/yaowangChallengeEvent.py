@@ -44,6 +44,8 @@ class YaowangChallengeEvent(AbstractEvent):
         return False
 
     def challengeFinished(self):
+        #点掉可能出现的奖励弹窗
+        utils.tap(263, 60)
         r = utils.find_and_click_text("可驻守妖王", False)
         return r
 

@@ -1,3 +1,5 @@
+from glob import glob
+import logging
 from sqlite3 import Date
 import threading
 import os
@@ -18,9 +20,8 @@ from events.lixianshouyiEvent import LixianshouyiEvent
 from logic.yaowangLogic import YaowangLogic
 
 eventQueue = Queue()
-yl = YaowangLogic(eventQueue)
-logics = [yl]
-day = time.localtime().tm_mday
+logics = [YaowangLogic(eventQueue)]
+day = 0
 
 def resetLogics():
     for logic in logics:
@@ -54,6 +55,7 @@ def start():
             eventQueue.put(event)
         if not event.completionCondition():
             restartApp()
+    global day
     d = time.localtime().tm_mday
     if day != d:
         resetLogics()
@@ -77,3 +79,4 @@ if __name__ == "__main__":
     trigger = TriggerManager.interval_trigger(conf={"timeInterval": 1, "timeUnit": 's'})
     scheduler.add_job(start, trigger)
     scheduler.start()
+    # logging.getLogger('apscheduler.executors.default').propagate = False

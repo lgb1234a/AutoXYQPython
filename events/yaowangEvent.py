@@ -14,5 +14,5 @@ class YaowangEvent(AbstractEvent):
         return True
 		
     def _completionCondition(self):
-        r = utils.find_and_click_text("驻守者", False)
+        r = utils.find_and_click_text("剩余获取归属", False)
         return r

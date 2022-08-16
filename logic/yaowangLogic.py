@@ -11,11 +11,12 @@ class YaowangLogic(AbstractLogic):
         self.restCount = 100
         self.restTicket = 0
         self.restLevels = []
-        self.lastDoneMin = 0
+        self.lastDoneMin = -1
     
     def initEvents(self):
         self.events = [zhuchengEvent.ZhuchengEvent(), fengyaorukouEvent.FengyaoRukouEvent(), yaowangEvent.YaowangEvent()]
 
+        self.restLevels = []
         if self.restCount < 9:
             for i in range(0, self.restCount):
                 self.events.append(YaowangChallengeEvent(self, 130 - i*10))
@@ -36,7 +37,12 @@ class YaowangLogic(AbstractLogic):
             return False
         if self.restCount == 0:
             return False
-        return self.lastDoneMin != time.localtime().tm_min
+        
+        if self.lastDoneMin >= 0 and self.lastDoneMin < 20 and t.tm_min < 20:
+            return False
+        if self.lastDoneMin >= 30 and t.tm_min >= 30:
+            return False
+        return True
 
     def updateRestCount(self):
         r = utils.ocr()
