@@ -9,7 +9,7 @@ class LilianEvent(AbstractEvent):
         return True
 	
     def _do(self):
-        p = utils.recg_img_and_click('TargetPic/.png')
+        p = utils.recg_img_and_click('TargetPic/lilian_rukou.png')
         return bool(p)
 		
     def _completionCondition(self):
