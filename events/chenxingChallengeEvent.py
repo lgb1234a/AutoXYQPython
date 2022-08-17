@@ -1,17 +1,20 @@
-from abstractEvent import AbstractEvent
 from ocrModel import OcrModel
 import utils
+from abstractEvent import AbstractEvent
 
-
-class YaowangChallengeEvent(AbstractEvent):
+class ChenxingChallengeEvent(AbstractEvent):
     def __init__(self, observer, level):
-        super().__init__('<妖王{level}>')
+        super().__init__('<辰星{level}>')
         self.observer = observer
         self.level = level
 
     def _preCondition(self):
-        self.observer.updateRestCount()
+        # self.observer.updateRestCount()
         return True
+
+    # 点击按钮+跳过
+    def challengeFinished(self):
+        pass
 
     def locateLevelAndChallenge(self, destLevel):
         result = utils.ocr()
@@ -22,7 +25,7 @@ class YaowangChallengeEvent(AbstractEvent):
             m = OcrModel(i)
             if m.text.find(f'{destLevel}级') == 0:
                 utils.tap(m.center[0], m.center[1] - 30)
-                utils.recg_img_and_click("TargetPic/yaowang_click.png")
+                # utils.recg_img_and_click("TargetPic/yaowang_click.png")
                 return True
             if len(m.text) < 5 and m.text.find('0级') != -1:
                 endIdx = m.text.find('0级') + 1
@@ -42,33 +45,28 @@ class YaowangChallengeEvent(AbstractEvent):
         if destLevel > maxLevel:
             utils.swip(200, 180, 100, 180)
         return False
-
-    def challengeFinished(self):
-        #点掉可能出现的奖励弹窗
-        utils.tap(263, 60)
-        r = utils.find_and_click_text("可驻守妖王", False)
-        return r
-
-    def startYaowang(self, level):
+	
+    def startChenxing(self, level):
         loops = 0
         while(not self.locateLevelAndChallenge(level)):
             loops = loops + 1
             if loops > 20:
-                self.observer.yaowangFailed(level)
+                self.observer.chenxingFailed(level)
                 return False
         
         loops = 0
         while(not self.challengeFinished()):
             loops = loops + 1
             if loops > 20:
-                self.observer.yaowangFailed(level)
+                self.observer.chenxingFailed(level)
                 return False
 
-        self.observer.yaowangDone(level)
+        self.observer.chenxingDone()
         return True
-	
+
+
     def _do(self):
-        self.startYaowang(self.level)
+        self.startChenxing(self.level)
         return True
 		
     def _completionCondition(self):

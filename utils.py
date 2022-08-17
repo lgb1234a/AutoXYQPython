@@ -89,19 +89,16 @@ def find_and_click_text(text, need_tap = True):
             return True
     return False
 
-def get_page():
+def get_page_ocr():
     result = ocr()
     for i in result:
         m = OcrModel(i)
         print(m.text)
-        for p in pages:
-            if m.text.find(p.pageFlag) != -1:
-                return p
-    return False
 
 if __name__ == "__main__":
     #连接adb
     # os.system("adb connect 127.0.0.1:62001")
     # screen_shot()
     os.system("adb connect 127.0.0.1:62001")
-    swip(100, 180, 200, 180)
+    # swip(100, 180, 200, 180)
+    get_page_ocr()

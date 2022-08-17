@@ -1,8 +1,8 @@
 from abstractEvent import AbstractEvent
 
-class FengyaoEvent(AbstractEvent):
+class ChenxingEvent(AbstractEvent):
     def __init__(self):
-        super().__init__('<封妖>')
+        super().__init__('<天降辰星>')
 
     def _preCondition(self):
         return True

@@ -1,3 +1,4 @@
+from telnetlib import theNULL
 from abstractLogic import AbstractLogic
 import time
 from ocrModel import OcrModel
@@ -14,18 +15,31 @@ class YaowangLogic(AbstractLogic):
         self.lastDoneMin = -1
     
     def initEvents(self):
-        self.events = [zhuchengEvent.ZhuchengEvent(), fengyaorukouEvent.FengyaoRukouEvent(), yaowangEvent.YaowangEvent()]
+        atYaowangPage = False
+        r = utils.ocr()
+        for lineInfo in r:
+            m = OcrModel(lineInfo)
+            idx = m.text.find("可驻守妖王")
+            if idx != -1:
+                atYaowangPage = True
 
-        self.restLevels = []
-        if self.restCount < 9:
-            for i in range(0, self.restCount):
-                self.events.append(YaowangChallengeEvent(self, 130 - i*10))
-                self.restLevels.append(130 - i*10)
+        if not atYaowangPage:
+            self.events = [zhuchengEvent.ZhuchengEvent(), fengyaorukouEvent.FengyaoRukouEvent(), yaowangEvent.YaowangEvent()]
+
+        if len(self.restLevels) > 0:
+            #上一轮未完成的，继续完成
+            for level in self.restLevels:
+                self.events.append(YaowangChallengeEvent(self, level))
         else:
-            # 50~130
-            for i in range(130, 40, -10):
-                self.events.append(YaowangChallengeEvent(self, i))
-                self.restLevels.append(i)
+            if self.restCount < 9:
+                for i in range(0, self.restCount):
+                    self.events.append(YaowangChallengeEvent(self, 130 - i*10))
+                    self.restLevels.append(130 - i*10)
+            else:
+                # 50~130
+                for i in range(130, 40, -10):
+                    self.events.append(YaowangChallengeEvent(self, i))
+                    self.restLevels.append(i)
             
 
     # 时间区间&&剩余次数>0

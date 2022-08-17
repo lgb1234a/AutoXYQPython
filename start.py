@@ -18,9 +18,10 @@ from events.loginEvent import LoginEvent
 from events.pendingEvent import PendingEvent
 from events.lixianshouyiEvent import LixianshouyiEvent
 from logic.yaowangLogic import YaowangLogic
+from logic.chenxingLogic import ChenxingLogic
 
 eventQueue = Queue()
-logics = [YaowangLogic(eventQueue)]
+logics = [YaowangLogic(eventQueue),  ChenxingLogic(eventQueue)]
 day = 0
 
 def resetLogics():
