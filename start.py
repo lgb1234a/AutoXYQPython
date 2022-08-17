@@ -52,8 +52,7 @@ def start():
         if not event.preCondition():
             restartApp()
         if not event.do():
-            #Todo:
-            eventQueue.put(event)
+            pass
         if not event.completionCondition():
             restartApp()
     global day
