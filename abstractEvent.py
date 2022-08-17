@@ -1,4 +1,5 @@
 import datetime
+import utils
 class AbstractEvent():
     def __init__(self, name) -> None:
         self.name = name
@@ -16,9 +17,11 @@ class AbstractEvent():
         r = self._completionCondition()
         if not r:
             self.logger("  执行结果不匹配")
+            d = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+            utils.screen_shot(f'{utils.android_path}/debug/{d}.png')
         else:
             self.logger("       完成")
-        return r
+        return True
 
     
     def logger(self, msg):
@@ -28,10 +31,10 @@ class AbstractEvent():
             f.write(log)
 
 
-ab = AbstractEvent('<测试>')
-ab.logger("-------开始-------")
-ab.logger("  执行结果不匹配")
-ab.logger("       完成")
+# ab = AbstractEvent('<测试>')
+# ab.logger("-------开始-------")
+# ab.logger("  执行结果不匹配")
+# ab.logger("       完成")
 
 		
 	

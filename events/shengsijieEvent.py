@@ -18,6 +18,7 @@ class ShengsijieEvent(AbstractEvent):
         p = utils.recg_img_and_click('TargetPic/.png', False)
         if not bool(p):
             self.observer.shengsijieFailed()
+            return False
         else:
             self.observer.shengsijieDone()
-        return True
+            return True

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import datetime
 import threading
 import os
 from multiprocessing import Process
@@ -22,8 +23,11 @@ def kill_app():
     s = f"adb -s {emulator_ip} shell am force-stop com.netease.xyh5"
     os.system(s)
 
-def screen_shot():
+def screen_shot(path = False):
     s = f"adb -s {emulator_ip} shell screencap -p {android_path}/1.png"
+    print(path)
+    if bool(path):
+        s = f"adb -s {emulator_ip} shell screencap -p {path}"
     os.system(s)
 
 def is_app_running():
@@ -101,4 +105,5 @@ if __name__ == "__main__":
     # screen_shot()
     os.system("adb connect 127.0.0.1:62001")
     # swip(100, 180, 200, 180)
-    get_page_ocr()
+    d = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
+    screen_shot(f'{android_path}/debug/{d}.png')
